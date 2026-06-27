@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+* { -webkit-font-smoothing: antialiased; }
+body { @apply bg-paper text-ink font-body; margin: 0; }
+
+@layer utilities {
+  .eyebrow { @apply font-mono text-[0.7rem] tracking-[0.22em] uppercase; }
+  .focusable { @apply outline-none focus-visible:ring-2 focus-visible:ring-moss focus-visible:ring-offset-2 focus-visible:ring-offset-paper; }
+  .input { @apply w-full rounded-xl border border-ink/15 bg-paper px-3 py-2 text-sm outline-none focus:border-moss focus:ring-1 focus:ring-moss; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

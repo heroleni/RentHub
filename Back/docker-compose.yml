@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: renthub-db
+    environment:
+      POSTGRES_DB: renthub
+      POSTGRES_USER: renthub
+      POSTGRES_PASSWORD: renthub
+    ports:
+      - "5432:5432"
+    volumes:
+      - renthub-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U renthub"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: renthub-api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__Default: "Host=db;Port=5432;Database=renthub;Username=renthub;Password=renthub"
+      Jwt__Key: "change-this-to-a-long-random-secret-key-at-least-32-chars"
+      Jwt__Issuer: "RentHub"
+      Jwt__Audience: "RentHubClient"
+      Frontend__Origin: "http://localhost:5173"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      # --- SMTP (se leen de .env; ver .env.example) ---
+      Smtp__Enabled: "${SMTP_ENABLED:-false}"
+      Smtp__Host: "${SMTP_HOST:-}"
+      Smtp__Port: "${SMTP_PORT:-587}"
+      Smtp__User: "${SMTP_USER:-}"
+      Smtp__Password: "${SMTP_PASSWORD:-}"
+      Smtp__FromEmail: "${SMTP_FROM_EMAIL:-no-reply@renthub.local}"
+      Smtp__FromName: "${SMTP_FROM_NAME:-RentHub}"
+      Smtp__UseSsl: "${SMTP_USE_SSL:-false}"
+    ports:
+      - "8080:8080"
+
+volumes:
+  renthub-data:
